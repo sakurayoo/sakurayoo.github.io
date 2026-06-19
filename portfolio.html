@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>吳文玲 ｜ Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Noto+Sans+TC:wght@300;400;500&family=Noto+Serif+TC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --washi:      #fbf4f2;
+  --washi-2:    #f6e9e7;
+  --surface:    #fffaf9;
+  --line:       #ecd9da;
+  --line-soft:  #f0e2e2;
+  --ink:        #3c2f37;
+  --body:       #574852;
+  --muted:      #8a7681;
+  --plum:       #a8456b;
+  --plum-deep:  #8e3358;
+  --sakura:     #e89bb4;
+  --sakura-mid: #d97f9e;
+  --sakura-pale:#f6d6e0;
+  --serif:      'Noto Serif TC', 'PMingLiU', 'Songti TC', serif;
+  --sans:       'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', system-ui, sans-serif;
+  --cormorant:  'Cormorant Garamond', Georgia, serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  font-weight: 300;
+  background: var(--washi);
+  color: var(--body);
+  line-height: 1.6;
+  overflow-x: hidden;
+  position: relative;
+  cursor: url('assets/sakura-cursor.png') 20 20, auto;
+}
+/* sakura cursor everywhere, incl. clickables (OpenMoji 彩色, CC BY-SA) */
+a, button, .btn, .proj, .nav-links a, .skill-badges span, .tag,
+.info-row a, .contact-meta a {
+  cursor: url('assets/sakura-cursor.png') 20 20, pointer;
+}
+/* animated sakura cursor — JS follower; the static url() above is the no-JS fallback */
+html.cursor-anim, html.cursor-anim * { cursor: none !important; }
+#cursor-flower { position: fixed; top: 0; left: 0; z-index: 9500; pointer-events: none;
+  opacity: 0; transition: opacity .35s ease; will-change: transform; }
+#cursor-flower.on { opacity: 1; }
+#cursor-flower .spin { width: 30px; height: 30px; margin: -15px 0 0 -15px;
+  transform-origin: center; animation: cursor-life 2.8s ease-in-out infinite; }
+#cursor-flower .img { width: 100%; height: 100%;
+  background: url('assets/sakura-cursor-source.png') center/contain no-repeat;
+  filter: drop-shadow(0 2px 3px rgba(168,69,107,.28)); }
+#cursor-flower.pop .img { animation: cursor-pop .46s cubic-bezier(.2,.8,.3,1); }
+@keyframes cursor-life {
+  0%   { transform: rotate(-15deg) scale(1); }
+  50%  { transform: rotate(15deg) scale(1.12); }
+  100% { transform: rotate(-15deg) scale(1); }
+}
+@keyframes cursor-pop { 0% { transform: scale(1); } 35% { transform: scale(1.7); } 100% { transform: scale(1); } }
+/* faint washi grain */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  mix-blend-mode: multiply;
+}
+
+/* ── Cherry-blossom watercolour · Megata Morikaga, public domain (柔粉框) ── */
+.branch { position: fixed; z-index: 1; pointer-events: none; user-select: none; will-change: transform; }
+.branch-tr { top: 0; right: 0; width: min(30vw, 300px); opacity: 0.8;
+  transform-origin: center; animation: sway-tr 13s ease-in-out infinite; }
+.branch-bl { bottom: 0; left: 0; width: min(25vw, 250px); opacity: 0.62;
+  transform-origin: center; animation: sway-bl 16s ease-in-out infinite; }
+@keyframes sway-tr { 0%,100% { transform: scaleY(-1) rotate(-0.6deg); } 50% { transform: scaleY(-1) rotate(0.6deg); } }
+@keyframes sway-bl { 0%,100% { transform: scaleX(-1) rotate(-0.6deg); } 50% { transform: scaleX(-1) rotate(0.6deg); } }
+
+/* ── Falling petals canvas (BEHIND content) ── */
+#petal-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
+
+/* ── Interaction layers (above) ── */
+.ripple { position: fixed; pointer-events: none; z-index: 9000; transform: translate(-50%,-50%); }
+.ripple span {
+  position: absolute; top: 0; left: 0; transform: translate(-50%,-50%);
+  border-radius: 50%; border: 2px solid rgba(216,127,158,0.55);
+  animation: ripple-ring 2s cubic-bezier(0.2,0.7,0.3,1) forwards;
+}
+.ripple span:nth-child(2) { animation-delay: 0.22s; border-color: rgba(232,155,180,0.5); }
+.ripple span:nth-child(3) { animation-delay: 0.44s; border-color: rgba(244,180,200,0.42); }
+@keyframes ripple-ring {
+  0%   { width: 8px;   height: 8px;   opacity: 0.85; border-width: 2.5px; }
+  100% { width: 180px; height: 180px; opacity: 0;    border-width: 0.5px; }
+}
+.trail {
+  position: fixed; pointer-events: none; z-index: 8999;
+  animation: trail-up 2.2s ease-out forwards;
+}
+@keyframes trail-up {
+  0% { opacity: 0.75; transform: translate(-50%,-50%) rotate(0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, calc(-50% - 50px)) rotate(60deg) scale(0.3); }
+}
+
+/* ── Nav ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 20px clamp(24px, 5vw, 64px);
+  display: flex; align-items: center; justify-content: space-between;
+  background: transparent;
+  backdrop-filter: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s, background 0.3s, backdrop-filter 0.3s;
+}
+nav.scrolled { border-bottom-color: var(--line); background: rgba(251,244,242,0.9); backdrop-filter: blur(14px) saturate(1.2); }
+nav:not(.scrolled) .nav-logo { color: #fdeef4; }
+nav:not(.scrolled) .nav-links a { color: rgba(255,242,247,0.85); }
+nav:not(.scrolled) .nav-links a:hover { color: #fff; }
+.nav-logo {
+  font-family: var(--serif); font-size: 1.15rem; font-weight: 500;
+  color: var(--ink); text-decoration: none; letter-spacing: 0.16em;
+}
+.nav-logo::before { content: '✿ '; color: var(--sakura-mid); font-size: 0.8em; }
+.nav-links { display: flex; gap: clamp(16px, 3vw, 36px); list-style: none; }
+.nav-links a {
+  font-size: 0.8rem; color: var(--muted); text-decoration: none;
+  letter-spacing: 0.1em; transition: color 0.25s; position: relative; padding: 4px 0;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+  background: var(--sakura-mid); transform: scaleX(0); transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.2,0.8,0.3,1);
+}
+.nav-links a:hover { color: var(--plum); }
+.nav-links a:hover::after { transform: scaleX(1); }
+
+/* ── Layout ── */
+.container { max-width: 940px; margin: 0 auto; padding: 0 clamp(24px, 5vw, 40px); position: relative; z-index: 10; }
+section { position: relative; padding: clamp(80px, 12vh, 130px) 0; }
+section + section::before {
+  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 1px; height: 46px; background: linear-gradient(var(--sakura-pale), transparent);
+}
+
+/* huge faint kanji watermark */
+.kanji-bg {
+  position: absolute; font-family: var(--serif); font-weight: 300;
+  font-size: clamp(9rem, 26vw, 22rem); line-height: 0.8;
+  color: var(--ink); opacity: 0.035; z-index: 0; pointer-events: none;
+  user-select: none; top: 50%; transform: translateY(-50%);
+}
+.kanji-bg.right { right: -2vw; } .kanji-bg.left { left: -2vw; }
+
+/* ── Section heading system ── */
+.sec-head { display: flex; align-items: baseline; gap: 18px; margin-bottom: clamp(36px, 6vh, 60px); }
+.sec-title {
+  font-family: var(--serif); font-weight: 400; color: var(--ink);
+  font-size: clamp(1.7rem, 4.5vw, 2.7rem); letter-spacing: 0.04em; line-height: 1.1;
+}
+.sec-rom {
+  font-family: var(--cormorant); font-style: italic; font-weight: 400;
+  font-size: 1.2rem; color: var(--plum); letter-spacing: 0.02em;
+  position: relative; padding-left: 42px; white-space: nowrap;
+}
+.sec-rom::before {
+  content: ''; position: absolute; left: 0; bottom: 0.45em; width: 30px; height: 1px;
+  background: var(--sakura-mid);
+}
+
+/* ── Reveal ── */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2,0.8,0.3,1); }
+.reveal.visible { opacity: 1; transform: none; }
+.reveal.d1 { transition-delay: 0.08s; } .reveal.d2 { transition-delay: 0.16s; }
+.reveal.d3 { transition-delay: 0.24s; } .reveal.d4 { transition-delay: 0.32s; }
+
+/* ── Hero ── */
+#hero { min-height: 100vh; display: flex; align-items: center; padding: 120px 0 90px;
+  position: relative; background: var(--washi); }
+#hero::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: url('assets/hero-bg2.png') right center / cover no-repeat;
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 96%);
+  mask-image: linear-gradient(to bottom, #000 60%, transparent 96%); }
+#hero::after { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(circle, rgba(0,0,0,0.16) 0.7px, transparent 1.1px) 0 0 / 3.5px 3.5px,
+    linear-gradient(100deg, rgba(16,8,20,0.6) 0%, rgba(16,8,20,0.46) 42%, rgba(16,8,20,0.16) 74%, rgba(16,8,20,0.04) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 72%, transparent 100%); }
+#hero .hero-kicker { color: #f6c9d8; }
+#hero .hero-name { color: #fdf5f8; text-shadow: 0 2px 22px rgba(0,0,0,.55); }
+#hero .hero-romaji { color: #dcc8d2; }
+#hero .hero-typing { color: #f8d9e4; text-shadow: 0 1px 12px rgba(0,0,0,.5); }
+#hero .hero-desc { color: #ece2e8; text-shadow: 0 1px 14px rgba(0,0,0,.6); }
+#hero .hero-vertical { color: #fff; border-color: rgba(255,255,255,.45);
+  text-shadow: 0 0 3px rgba(96,52,72,0.55), 0 0 16px rgba(255,255,255,0.92), 0 0 32px rgba(255,255,255,0.55); }
+#hero .hero-vertical .accent { color: #fff; }
+#hero .btn-ghost { color: #f3dbe5; border-color: rgba(255,255,255,.32); }
+#hero .btn-ghost:hover { color: #fff; border-color: #f4abc4; }
+#hero .scroll-hint { color: var(--plum); }
+#hero .scroll-line { background: linear-gradient(var(--sakura-mid), transparent); }
+
+/* mid-section side cherry branch (cut-out photo) */
+#experience { overflow: hidden; }
+.side-sakura { position: absolute; top: 0; height: 100%; width: auto; right: clamp(40px, 21vw, 320px);
+  opacity: .58; z-index: 0; pointer-events: none; user-select: none; }
+@media (max-width: 700px) { .side-sakura { right: -70px; opacity: .4; } }
+
+/* contact — individual cherry petals scattered around the card, hover-reactive */
+#contact { overflow: hidden; min-height: 85vh; }
+#contact .container { position: relative; z-index: 2; }
+.petal-field { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.petal { position: absolute; pointer-events: none; user-select: none; opacity: .94; height: auto;
+  transform: rotate(var(--r, 0deg)); will-change: transform; }
+.hero-grid { display: grid; grid-template-columns: 1fr auto; gap: 40px; width: 100%; align-items: center; }
+.hero-kicker {
+  font-family: var(--cormorant); font-style: italic; font-size: 1.25rem;
+  color: var(--plum); margin-bottom: 20px; letter-spacing: 0.02em;
+}
+.hero-name {
+  font-family: var(--serif); font-weight: 500; color: var(--ink);
+  font-size: clamp(3.4rem, 11vw, 6rem); letter-spacing: 0.1em; line-height: 1; margin-bottom: 14px;
+}
+.hero-romaji {
+  font-size: clamp(0.78rem, 2vw, 0.95rem); font-weight: 300; color: var(--muted);
+  letter-spacing: 0.42em; margin-bottom: 30px; padding-left: 0.42em;
+}
+.hero-typing {
+  font-family: var(--serif); font-size: clamp(0.95rem, 2.4vw, 1.12rem);
+  color: var(--plum-deep); min-height: 1.6em; margin-bottom: 34px; font-weight: 400;
+}
+.hero-typing .cur { display: inline-block; width: 1px; height: 1.05em; background: var(--sakura-mid); margin-left: 3px; vertical-align: -0.12em; animation: blink 1s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.hero-desc { font-size: 1rem; color: var(--body); max-width: 50ch; line-height: 1.95; margin-bottom: 42px; }
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 9px; padding: 12px 26px;
+  border-radius: 2px; font-family: var(--sans); font-size: 0.85rem; font-weight: 400;
+  letter-spacing: 0.06em; text-decoration: none; cursor: pointer; border: 1px solid transparent;
+  transition: all 0.3s cubic-bezier(0.2,0.8,0.3,1);
+}
+.btn-primary { background: var(--plum); color: #fff; }
+.btn-primary:hover { background: var(--plum-deep); transform: translateY(-2px); box-shadow: 0 10px 26px -8px rgba(142,51,88,0.45); }
+.btn-ghost { background: transparent; color: var(--plum); border-color: var(--line); }
+.btn-ghost:hover { border-color: var(--sakura-mid); color: var(--plum-deep); transform: translateY(-2px); }
+
+/* vertical Japanese phrase */
+.hero-vertical {
+  writing-mode: vertical-rl; font-family: var(--serif); font-weight: 300;
+  font-size: clamp(0.85rem, 1.8vw, 1.05rem); letter-spacing: 0.55em;
+  color: var(--muted); height: 300px; opacity: 0.85;
+  border-right: 1px solid var(--line); padding-right: 26px;
+}
+.hero-vertical .accent { color: var(--plum); }
+
+.scroll-hint {
+  position: absolute; bottom: 34px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  font-family: var(--cormorant); font-style: italic; font-size: 0.82rem; color: var(--muted);
+}
+.scroll-line { width: 1px; height: 40px; background: linear-gradient(var(--sakura-mid), transparent); animation: scroll-pulse 2s ease-in-out infinite; transform-origin: top; }
+@keyframes scroll-pulse { 0%,100% { transform: scaleY(0.4); opacity: 0.4; } 50% { transform: scaleY(1); opacity: 1; } }
+
+/* ── About ── */
+.about-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: clamp(40px, 6vw, 72px); align-items: start; }
+.about-text p { font-size: 1rem; color: var(--body); line-height: 2; margin-bottom: 20px; max-width: 58ch; }
+.about-text p strong { color: var(--plum); font-weight: 500; }
+.about-text p:first-child::first-letter {
+  font-family: var(--serif); font-size: 3.8em; float: left; line-height: 0.82;
+  margin: 0.12em 0.12em 0 0; color: var(--sakura-mid); font-weight: 500;
+}
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 24px 26px; margin-bottom: 16px; }
+.card h4 { font-family: var(--cormorant); font-style: italic; font-size: 1.05rem; color: var(--plum); margin-bottom: 16px; font-weight: 500; }
+.info-row { display: flex; gap: 12px; align-items: baseline; margin-bottom: 11px; font-size: 0.88rem; }
+.info-row:last-child { margin-bottom: 0; }
+.info-row .k { color: var(--muted); min-width: 52px; font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.info-row .v { color: var(--ink); }
+.info-row a { color: var(--plum); text-decoration: none; border-bottom: 1px solid var(--sakura-pale); transition: border-color 0.2s; }
+.info-row a:hover { border-bottom-color: var(--sakura-mid); }
+.cert { display: flex; align-items: flex-start; gap: 9px; font-size: 0.86rem; color: var(--body); margin-bottom: 9px; }
+.cert:last-child { margin-bottom: 0; }
+.cert::before { content: '✿'; color: var(--sakura-mid); font-size: 0.7rem; line-height: 1.5; }
+
+/* ── Timeline ── */
+.timeline { position: relative; padding-left: 30px; }
+.timeline::before { content: ''; position: absolute; left: 4px; top: 6px; bottom: 6px; width: 1px; background: linear-gradient(var(--sakura-mid), var(--sakura-pale)); }
+.tl-item { position: relative; margin-bottom: 46px; }
+.tl-item:last-child { margin-bottom: 0; }
+.tl-item::before {
+  content: ''; position: absolute; left: -30px; top: 7px; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--washi); border: 1.5px solid var(--sakura-mid);
+  box-shadow: 0 0 0 4px var(--washi); transition: all 0.3s;
+}
+.tl-item:hover::before { background: var(--sakura-mid); transform: scale(1.25); }
+.tl-period { font-family: var(--cormorant); font-style: italic; font-size: 0.95rem; color: var(--plum); margin-bottom: 5px; letter-spacing: 0.02em; }
+.tl-title { font-family: var(--serif); font-size: 1.12rem; font-weight: 500; color: var(--ink); margin-bottom: 3px; }
+.tl-company { font-size: 0.85rem; color: var(--sakura-mid); margin-bottom: 13px; letter-spacing: 0.02em; }
+.tl-desc { font-size: 0.9rem; color: var(--body); line-height: 1.8; margin-bottom: 13px; max-width: 60ch; }
+.tl-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+.tag { font-size: 0.72rem; padding: 3px 11px; background: var(--washi-2); color: var(--muted); border-radius: 20px; border: 1px solid var(--line-soft); letter-spacing: 0.02em; transition: all 0.25s; }
+.tag:hover { background: var(--sakura-pale); color: var(--plum); border-color: var(--sakura); }
+
+/* ── Skills ── */
+.skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; }
+.skill-col { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 26px; transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s; }
+.skill-col:hover { border-color: var(--sakura); transform: translateY(-4px); box-shadow: 0 16px 36px -16px rgba(168,69,107,0.22); }
+.skill-head { font-family: var(--serif); font-size: 1.05rem; color: var(--ink); font-weight: 500; margin-bottom: 4px; }
+.skill-sub { font-family: var(--cormorant); font-style: italic; font-size: 0.92rem; color: var(--plum); margin-bottom: 18px; }
+.skill-badges { display: flex; flex-wrap: wrap; gap: 7px; }
+.skill-badges span { font-size: 0.8rem; padding: 5px 13px; background: var(--washi); color: var(--body); border: 1px solid var(--line); border-radius: 2px; transition: all 0.25s; cursor: default; }
+.skill-badges span:hover { background: var(--plum); color: #fff; border-color: var(--plum); transform: translateY(-2px); }
+
+/* ── Projects ── */
+.proj-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.proj {
+  position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
+  padding: 28px 28px 26px; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 14px;
+  overflow: hidden; transition: border-color 0.35s, transform 0.35s, box-shadow 0.35s;
+}
+.proj::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--sakura), var(--plum)); transform: scaleX(0); transform-origin: left;
+  transition: transform 0.45s cubic-bezier(0.2,0.8,0.3,1);
+}
+.proj:hover { border-color: var(--sakura); transform: translateY(-5px); box-shadow: 0 22px 48px -22px rgba(168,69,107,0.3); }
+.proj:hover::after { transform: scaleX(1); }
+.proj-top { display: flex; align-items: center; justify-content: space-between; }
+.proj-name { font-family: var(--serif); font-size: 0.98rem; font-weight: 500; color: var(--ink); display: flex; align-items: center; gap: 9px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.js { background: #e0c84a; } .vue { background: #41b883; } .cs { background: #57a64a; } .java { background: #c08a3e; }
+.proj-arrow { color: var(--sakura-mid); opacity: 0; transform: translate(-5px,5px); transition: all 0.3s; }
+.proj:hover .proj-arrow { opacity: 1; transform: none; }
+.proj-desc { font-size: 0.86rem; color: var(--body); line-height: 1.75; flex: 1; }
+.proj-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.proj-tags span { font-size: 0.68rem; padding: 3px 9px; background: var(--washi); color: var(--plum); border: 1px solid var(--sakura-pale); border-radius: 2px; letter-spacing: 0.03em; }
+
+/* ── Contact ── */
+#contact .container { text-align: center; }
+.contact-wrap { max-width: 460px; margin: 0 auto;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 22px;
+  padding: clamp(28px, 5vw, 42px) clamp(24px, 5vw, 40px);
+  backdrop-filter: blur(5px) saturate(1.05);
+  box-shadow: 0 12px 40px -18px rgba(168, 69, 107, 0.2); }
+.contact-head { display: inline-flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 26px; }
+.contact-head .sec-title { font-size: clamp(1.9rem, 5vw, 3rem); }
+.contact-head .sec-rom { padding-left: 0; }
+.contact-head .sec-rom::before { display: none; }
+.contact-desc { font-size: 1.02rem; color: var(--body); line-height: 1.9; margin-bottom: 40px; }
+.contact-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 34px; }
+.contact-meta { display: flex; gap: 28px; justify-content: center; flex-wrap: wrap; font-size: 0.84rem; color: var(--muted); }
+.contact-meta a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+.contact-meta a:hover { color: var(--plum); }
+
+/* ── Footer ── */
+footer { padding: 40px 0; text-align: center; border-top: 1px solid var(--line-soft); position: relative; z-index: 10; }
+.footer-mark { font-family: var(--cormorant); font-style: italic; font-size: 0.9rem; color: var(--muted); }
+.footer-mark .b { color: var(--sakura-mid); }
+.credits { font-size: 0.64rem; color: var(--muted); margin-top: 9px; letter-spacing: .02em; line-height: 1.6; }
+.credits a { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ── Responsive ── */
+@media (max-width: 820px) {
+  .hero-vertical { display: none; }
+  .hero-grid { grid-template-columns: 1fr; }
+  .about-grid { grid-template-columns: 1fr; gap: 36px; }
+}
+@media (max-width: 600px) {
+  .nav-links { gap: 14px; font-size: 0.72rem; }
+  .nav-links a { font-size: 0.72rem; }
+  .proj-grid { grid-template-columns: 1fr; }
+  .sec-head { flex-direction: column; gap: 6px; }
+  .sec-rom { padding-left: 0; } .sec-rom::before { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .branch, .scroll-line, .hero-typing .cur, #cursor-flower .spin { animation: none; }
+  .reveal { opacity: 1; transform: none; }
+  .proj:hover, .skill-col:hover, .btn:hover, .tl-item:hover::before { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- decorative cherry branches are the Hiroshige PNGs in the corners (below) -->
+
+<!-- per-section cherry imagery: hero bg + side branch + petals carpet (Wikimedia Commons, see credits) -->
+
+<!-- falling petals -->
+<canvas id="petal-canvas"></canvas>
+
+<!-- animated sakura cursor follower -->
+<div id="cursor-flower" aria-hidden="true"><div class="spin"><div class="img"></div></div></div>
+
+<!-- ░░ Nav ░░ -->
+<nav id="nav">
+  <a class="nav-logo" href="#">吳文玲</a>
+  <ul class="nav-links">
+    <li><a href="#about">關於</a></li>
+    <li><a href="#experience">歷程</a></li>
+    <li><a href="#skills">技能</a></li>
+    <li><a href="#projects">作品</a></li>
+    <li><a href="#contact">聯絡</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-main">
+          <p class="hero-kicker">Full-Stack Developer ・ 台中</p>
+          <h1 class="hero-name">吳文玲</h1>
+          <p class="hero-romaji">WU&nbsp;&nbsp;WEN-LING</p>
+          <p class="hero-typing"><span id="typed"></span><span class="cur"></span></p>
+          <p class="hero-desc">
+            畢業於國立勤益科技大學資訊管理系，擁有 4 年軟體開發經驗。
+            從 Vue.js 前端到 ASP.NET Core MVC 後端皆能勝任，背景橫跨金融、企業與製造領域，
+            並習慣以 AI 工具輔助開發，讓每一行程式都更加細緻。
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#projects">查看作品 →</a>
+            <a class="btn btn-ghost" href="https://github.com/sakurayoo" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </div>
+        <div class="hero-vertical">用心　寫好　每<span class="accent">一</span>行</div>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span>scroll</span>
+      <span class="scroll-line"></span>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <span class="kanji-bg right">私</span>
+    <div class="container">
+      <div class="sec-head reveal"><h2 class="sec-title">關於我</h2><span class="sec-rom">about me</span></div>
+      <div class="about-grid">
+        <div class="about-text reveal d1">
+          <p>畢業於國立勤益科技大學資訊管理系，擁有 <strong>4 年軟體開發經驗</strong>，背景橫跨金融系統、企業資訊系統與工業自動化專案。擅長快速理解業務需求，並將它轉化為可落地的技術方案。</p>
+          <p>職涯從<strong>醫療器材製造業</strong>的 PHP + MySQL 內部系統開發起步，並接觸 PLC 與 C# 參與 KUKA 機械手臂控制，累積軟硬體整合經驗；後進入<strong>金融業</strong>擔任軟體工程師，負責 ATM 系統維護與專案開發。該產業對穩定性與資安的高要求，養成我嚴謹的開發習慣與問題分析能力。</p>
+          <p>目前任職於<strong>系統整合服務業</strong>，主責 <strong>ASP.NET Core MVC、Vue.js</strong> 全端開發，涵蓋系統設計、Windows Forms 維護、RFID 設備整合、MSSQL 設計與效能優化、IIS 部署維運，並善用 <strong>AI 工具</strong>提升開發效率。未來期望朝<strong>資深全端工程師／系統架構師</strong>方向發展。</p>
+        </div>
+        <aside class="about-side">
+          <div class="card reveal d2">
+            <h4>Contact</h4>
+            <div class="info-row"><span class="k">Email</span><span class="v"><a href="mailto:renaye728728@gmail.com">renaye728728@gmail.com</a></span></div>
+            <div class="info-row"><span class="k">Tel</span><span class="v">0906-251-517</span></div>
+            <div class="info-row"><span class="k">Loc</span><span class="v">台中市 ・ 高雄市</span></div>
+            <div class="info-row"><span class="k">Git</span><span class="v"><a href="https://github.com/sakurayoo" target="_blank" rel="noopener">github.com/sakurayoo</a></span></div>
+          </div>
+          <div class="card reveal d3">
+            <h4>Education</h4>
+            <div class="info-row"><span class="v">國立勤益科技大學<br>資訊管理系　<span style="color:var(--muted)">2017–2021</span></span></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience -->
+  <section id="experience">
+    <span class="kanji-bg left">歴</span>
+    <img class="side-sakura" src="assets/vbranch.png" alt="" aria-hidden="true">
+    <div class="container">
+      <div class="sec-head reveal"><h2 class="sec-title">工作歷程</h2><span class="sec-rom">experience</span></div>
+      <div class="timeline">
+        <div class="tl-item reveal d1">
+          <div class="tl-period">2026.03 — Present</div>
+          <div class="tl-title">全端工程師</div>
+          <div class="tl-company">電腦系統整合服務業</div>
+          <p class="tl-desc">參與企業內部系統全端開發，負責需求訪談、系統設計、開發測試與上線部署，以 ASP.NET Core MVC + Vue.js + MSSQL 建置功能、RESTful API 完成跨系統整合。串接 RFID 硬體建立門禁與人員驗證、開發即時監控 Dashboard（多帳號獨立拖曳佈局），並開發及維護 Windows Forms 桌面應用、負責 IIS 部署與線上問題排查。</p>
+          <div class="tl-tags"><span class="tag">ASP.NET Core MVC</span><span class="tag">Vue.js</span><span class="tag">MSSQL</span><span class="tag">RESTful API</span><span class="tag">RFID</span><span class="tag">Windows Forms</span><span class="tag">IIS</span></div>
+        </div>
+        <div class="tl-item reveal d2">
+          <div class="tl-period">2023.07 — 2025.08 &nbsp;·&nbsp; 2 年 2 個月</div>
+          <div class="tl-title">軟體工程師</div>
+          <div class="tl-company">銀行業（500+ 人）</div>
+          <p class="tl-desc">與各單位合作開發專案並完成上線；開發約定轉帳次數查詢 API、製作金管會與內部查核報表，確保法規遵循。開發供行內使用之程式、維運跨行連線作業網頁，並維護 COBOL 核心業務系統。</p>
+          <div class="tl-tags"><span class="tag">C# .NET</span><span class="tag">COBOL</span><span class="tag">ATM 系統</span><span class="tag">RESTful API</span><span class="tag">報表開發</span></div>
+        </div>
+        <div class="tl-item reveal d3">
+          <div class="tl-period">2023.04 — 2023.06 &nbsp;·&nbsp; 短期合約</div>
+          <div class="tl-title">網頁工程師</div>
+          <div class="tl-company">機械製造業</div>
+          <p class="tl-desc">負責「知識庫平台」全流程開發，需求訪談、系統分析設計（SA/SD）、MySQL 資料庫建置，使用 C# Blazor 與三層式架構完成後端邏輯、檔案上傳讀取、資料庫 CRUD 及前端元件設計。</p>
+          <div class="tl-tags"><span class="tag">C# Blazor</span><span class="tag">MySQL</span><span class="tag">三層式架構</span><span class="tag">SA/SD</span></div>
+        </div>
+        <div class="tl-item reveal d4">
+          <div class="tl-period">2021.07 — 2022.05 &nbsp;·&nbsp; 11 個月</div>
+          <div class="tl-title">程式設計師</div>
+          <div class="tl-company">醫療器材製造業（30～100 人）</div>
+          <p class="tl-desc">以 PHP + MySQL 從零開發物料管理系統，實作關鍵字搜尋、CRUD、圖片上傳、領料申請流程、Excel 匯出與權限管理（第三正規化），作業效率提升約 50%。另以 C# 開發 KUKA 機械手臂控制程式（取代 1～2 位作業員），及 VBA 自動化甘特圖工具。</p>
+          <div class="tl-tags"><span class="tag">PHP</span><span class="tag">MySQL</span><span class="tag">C#</span><span class="tag">KUKA 機械手臂</span><span class="tag">PLC</span><span class="tag">VBA</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills">
+    <span class="kanji-bg right">技</span>
+    <div class="container">
+      <div class="sec-head reveal"><h2 class="sec-title">技術能力</h2><span class="sec-rom">skills</span></div>
+      <div class="skills-grid">
+        <div class="skill-col reveal d1">
+          <div class="skill-head">網頁設計</div><div class="skill-sub">Web Design</div>
+          <div class="skill-badges"><span>HTML5</span><span>CSS3</span><span>UI 設計</span><span>網頁配色</span><span>版面切版</span><span>RWD 響應式</span></div>
+        </div>
+        <div class="skill-col reveal d2">
+          <div class="skill-head">前端</div><div class="skill-sub">Front End</div>
+          <div class="skill-badges"><span>JavaScript</span><span>Vue.js</span><span>React</span><span>Bootstrap</span><span>jQuery</span><span>串接 API</span></div>
+        </div>
+        <div class="skill-col reveal d3">
+          <div class="skill-head">後端</div><div class="skill-sub">Back End</div>
+          <div class="skill-badges"><span>C#</span><span>ASP.NET</span><span>MVC</span><span>Blazor</span><span>Java</span><span>Spring Boot</span><span>PHP</span><span>RESTful API</span></div>
+        </div>
+        <div class="skill-col reveal d4">
+          <div class="skill-head">資料庫</div><div class="skill-sub">Database</div>
+          <div class="skill-badges"><span>MSSQL</span><span>MySQL</span><span>T-SQL</span><span>資料庫建置</span></div>
+        </div>
+        <div class="skill-col reveal d4">
+          <div class="skill-head">AI 應用</div><div class="skill-sub">AI Tools</div>
+          <div class="skill-badges"><span>Claude Code</span><span>ChatGPT</span><span>串接 API</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects">
+    <span class="kanji-bg left">作</span>
+    <div class="container">
+      <div class="sec-head reveal"><h2 class="sec-title">作品集</h2><span class="sec-rom">selected works</span></div>
+      <div class="proj-grid">
+        <a class="proj reveal d1" href="https://github.com/sakurayoo/snow-white-story-game" target="_blank" rel="noopener">
+          <div class="proj-top">
+            <span class="proj-name"><span class="dot js"></span>snow-white-story-game</span>
+            <svg class="proj-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+          </div>
+          <p class="proj-desc">AI 驅動的互動童話遊戲，玩家在魔法森林與白雪公主一同破除魔咒。具 3D 翻書動畫、打字機效果、情緒偵測與自由文字輸入。</p>
+          <div class="proj-tags"><span>React 18</span><span>ASP.NET Core</span><span>Groq AI</span><span>SQLite</span><span>Tailwind</span></div>
+        </a>
+        <a class="proj reveal d2" href="https://github.com/sakurayoo/sweater" target="_blank" rel="noopener">
+          <div class="proj-top">
+            <span class="proj-name"><span class="dot vue"></span>sweater</span>
+            <svg class="proj-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+          </div>
+          <p class="proj-desc">即時全球天氣查詢系統，支援城市搜尋與即時氣象資料呈現，響應式介面適配各種裝置。</p>
+          <div class="proj-tags"><span>Vue.js 3</span><span>Bootstrap 5</span><span>Weather API</span></div>
+        </a>
+        <a class="proj reveal d3" href="https://github.com/sakurayoo/NorthwindApi" target="_blank" rel="noopener">
+          <div class="proj-top">
+            <span class="proj-name"><span class="dot cs"></span>NorthwindApi</span>
+            <svg class="proj-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+          </div>
+          <p class="proj-desc">完整全端 CRUD 應用，ASP.NET Core Web API 為後端、Vue 3 為前端，涵蓋產品、分類、客戶管理，並支援 Swagger 文件。</p>
+          <div class="proj-tags"><span>C#</span><span>ASP.NET Core</span><span>Vue 3</span><span>SQLite</span><span>Swagger</span></div>
+        </a>
+        <a class="proj reveal d4" href="https://github.com/sakurayoo/northwind-sqlite" target="_blank" rel="noopener">
+          <div class="proj-top">
+            <span class="proj-name"><span class="dot java"></span>northwind-sqlite</span>
+            <svg class="proj-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+          </div>
+          <p class="proj-desc">以 Java Spring Boot 實作北風資料庫練習，搭配 SQLite 與標準 Maven 架構，展示 Spring Data 整合能力。</p>
+          <div class="proj-tags"><span>Java</span><span>Spring Boot</span><span>SQLite</span><span>Maven</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <span class="kanji-bg right">縁</span>
+    <div class="petal-field" aria-hidden="true">
+      <img class="petal" src="assets/petals/petal-02.png" style="left:6%;top:11%;width:70px;--r:-14deg" alt="">
+      <img class="petal" src="assets/petals/petal-11.png" style="left:3%;top:25%;width:80px;--r:18deg" alt="">
+      <img class="petal" src="assets/petals/petal-07.png" style="left:15%;top:35%;width:32px;--r:8deg" alt="">
+      <img class="petal" src="assets/petals/petal-04.png" style="right:7%;top:9%;width:92px;--r:10deg" alt="">
+      <img class="petal" src="assets/petals/petal-12.png" style="right:4%;top:24%;width:78px;--r:-16deg" alt="">
+      <img class="petal" src="assets/petals/petal-03.png" style="right:16%;top:34%;width:30px;--r:20deg" alt="">
+      <img class="petal" src="assets/petals/petal-09.png" style="left:45%;top:5%;width:34px;--r:12deg" alt="">
+      <img class="petal" src="assets/petals/petal-17.png" style="left:9%;top:52%;width:84px;--r:8deg" alt="">
+      <img class="petal" src="assets/petals/petal-05.png" style="left:27%;top:62%;width:50px;--r:-10deg" alt="">
+      <img class="petal" src="assets/petals/petal-18.png" style="right:11%;top:55%;width:82px;--r:-8deg" alt="">
+      <img class="petal" src="assets/petals/petal-06.png" style="right:29%;top:66%;width:50px;--r:16deg" alt="">
+      <img class="petal" src="assets/petals/petal-10.png" style="left:43%;top:74%;width:58px;--r:22deg" alt="">
+      <img class="petal" src="assets/petals/petal-13.png" style="left:17%;top:80%;width:28px;--r:-20deg" alt="">
+      <img class="petal" src="assets/petals/petal-08.png" style="right:21%;top:82%;width:28px;--r:14deg" alt="">
+      <img class="petal" src="assets/petals/petal-20.png" style="left:34%;top:88%;width:54px;--r:10deg" alt="">
+      <img class="petal" src="assets/petals/petal-14.png" style="right:7%;top:90%;width:34px;--r:-24deg" alt="">
+      <img class="petal" src="assets/petals/petal-19.png" style="left:6%;top:92%;width:46px;--r:18deg" alt="">
+      <img class="petal" src="assets/petals/petal-16.png" style="left:4%;top:69%;width:46px;--r:12deg" alt="">
+      <img class="petal" src="assets/petals/petal-01.png" style="right:5%;top:61%;width:84px;--r:-6deg" alt="">
+      <img class="petal" src="assets/petals/petal-15.png" style="left:50%;top:95%;width:26px;--r:-14deg" alt="">
+    </div>
+    <div class="container">
+      <div class="contact-wrap">
+        <div class="contact-head reveal"><h2 class="sec-title">結個善緣</h2><span class="sec-rom">get in touch</span></div>
+        <p class="contact-desc reveal d1">無論是工作機會、技術交流，或任何有趣的合作，都歡迎找我聊聊。</p>
+        <div class="contact-btns reveal d2">
+          <a class="btn btn-primary" href="https://github.com/sakurayoo" target="_blank" rel="noopener">GitHub →</a>
+        </div>
+        <div class="contact-meta reveal d3">
+          <a href="mailto:renaye728728@gmail.com">✉ renaye728728@gmail.com</a>
+          <a href="tel:0906251517">✆ 0906-251-517</a>
+          <span>❀ 台中市 ・ 高雄市</span>
+        </div>
+        <!-- credits removed: hero & tree are your own artwork; side branch is CC0 -->
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- footer removed per request; image credits kept in the contact section for CC BY-SA compliance -->
+
+<script>
+/* ── Typing ── */
+const phrases = ['Vue.js ・ C# ・ ASP.NET ・ Java','全端工程師，也是 AI 工具愛好者','從前端到後端，從銀行到科技業','讓程式碼更優雅，一次一行'];
+const tEl = document.getElementById('typed');
+let pi = 0, ci = 0, del = false;
+(function type(){
+  const p = phrases[pi];
+  tEl.textContent = del ? p.slice(0, --ci) : p.slice(0, ++ci);
+  let d = del ? 45 : 95;
+  if (!del && ci === p.length) { del = true; d = 1600; }
+  else if (del && ci === 0) { del = false; pi = (pi+1)%phrases.length; d = 400; }
+  setTimeout(type, d);
+})();
+
+/* ── Petals: blow right→left over the hero, gentle fall elsewhere ── */
+const cv = document.getElementById('petal-canvas'), x = cv.getContext('2d');
+let W, H, list = [], mx = -9999, my = -9999, wT = 0, f = 0;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function size(){ W = cv.width = innerWidth; H = cv.height = innerHeight; }
+size(); addEventListener('resize', size);
+const PAL = [['rgba(244,180,200,','rgba(216,127,158,'],['rgba(250,210,224,','rgba(232,155,180,'],['rgba(238,168,194,','rgba(206,110,150,']];
+class P {
+  constructor(init, heroOnly){ this.heroOnly = heroOnly; this.r(init); }
+  r(init){
+    this.s = Math.random()*6+5;
+    this.x = Math.random()*W;
+    this.y = init ? Math.random()*H : -16;
+    this.vy = Math.random()*1+0.9;
+    this.vx = (Math.random()-0.5)*0.3;
+    this.bvx = -(Math.random()*2.6+1.8);
+    this.bvy = Math.random()*2+1.8;
+    this.rot = Math.random()*6.28;
+    this.rs = (Math.random()-0.5)*0.03;
+    this.op = Math.random()*0.32+0.32;
+    this.ph = Math.random()*6.28;
+    this.sw = Math.random()*0.6+0.25;
+    this.c = PAL[(Math.random()*3)|0];
+  }
+  fromRight(){ if (Math.random()<0.5){ this.x = W+20+Math.random()*90; this.y = Math.random()*H*0.8; } else { this.x = Math.random()*W; this.y = -20-Math.random()*60; } this.bvx = -(Math.random()*2.6+1.8); this.bvy = Math.random()*2+1.8; }
+  fromTop(){ this.x = Math.random()*W; this.y = -16; this.vy = Math.random()*1+0.9; this.vx = (Math.random()-0.5)*0.3; }
+  step(wind, hero){
+    if (hero){
+      this.x += this.bvx - wind*0.25;
+      this.y += this.bvy + Math.sin(f*0.012+this.ph)*0.45;
+      this.rot += this.rs;
+      if (this.x < -45 || this.y > H+30 || this.y < -60){ this.fromRight(); }
+    } else {
+      const dx = this.x-mx, dy = this.y-my, dd = Math.hypot(dx,dy);
+      if (dd < 95){ const fr = (95-dd)/95*1.8; this.vx += dx/dd*fr*0.05; this.vy += dy/dd*fr*0.03; }
+      this.x += this.vx + Math.sin(f*0.012+this.ph)*this.sw + wind*0.3;
+      this.y += this.vy;
+      this.vx *= 0.98; this.vy = Math.min(3.8, this.vy*0.99+0.022);
+      this.rot += this.rs + wind*0.0015;
+      if (this.y > H+16 || this.x < -50 || this.x > W+50){ this.fromTop(); }
+    }
+  }
+  draw(){
+    x.save(); x.translate(this.x,this.y); x.rotate(this.rot); x.globalAlpha = this.op;
+    const s = this.s, g = x.createRadialGradient(0,-s*0.4,0,0,-s*0.4,s);
+    g.addColorStop(0,this.c[0]+'1)'); g.addColorStop(1,this.c[1]+'0.55)');
+    x.fillStyle = g;
+    x.beginPath(); x.moveTo(0,0);
+    x.bezierCurveTo(s*0.62,-s*0.3, s*0.8,-s*0.82, 0,-s*1.2);
+    x.bezierCurveTo(-s*0.8,-s*0.82, -s*0.62,-s*0.3, 0,0);
+    x.fill(); x.restore();
+  }
+}
+for (let i=0;i<22;i++) list.push(new P(true, false));
+for (let i=0;i<44;i++) list.push(new P(true, true));
+(function loop(){
+  requestAnimationFrame(loop);
+  x.clearRect(0,0,W,H);
+  wT += 0.007; f++;
+  const wind = Math.sin(wT)*0.6 + Math.sin(wT*2.3+1)*0.3;
+  const hero = scrollY < H * 0.9;
+  for (const p of list){ p.step(wind, hero); p.draw(); }
+})();
+addEventListener('mousemove', e=>{ mx=e.clientX; my=e.clientY; });
+addEventListener('mouseleave', ()=>{ mx=my=-9999; });
+
+/* ── Soft ripple on click ── */
+addEventListener('click', e=>{
+  const r = document.createElement('div'); r.className='ripple';
+  r.style.left=e.clientX+'px'; r.style.top=e.clientY+'px';
+  r.innerHTML = '<span></span><span></span><span></span>';
+  document.body.appendChild(r); setTimeout(()=>r.remove(),2600);
+});
+
+/* ── Sparse petal trail ── */
+let lt = 0; const marks = ['✿','❀','✾'];
+addEventListener('mousemove', e=>{
+  const n = Date.now(); if (n-lt < 55) return; lt = n;
+  const t = document.createElement('div'); t.className='trail';
+  const o = (Math.random()-0.5)*14;
+  t.style.cssText = `left:${e.clientX+o}px;top:${e.clientY+o}px;font-size:${Math.random()*5+7}px;color:rgba(216,127,158,${Math.random()*0.4+0.3})`;
+  t.textContent = marks[(Math.random()*marks.length)|0];
+  document.body.appendChild(t); setTimeout(()=>t.remove(),2200);
+});
+
+/* ── Reveal on scroll ── */
+const io = new IntersectionObserver(es=>{
+  es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('visible'); io.unobserve(en.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ── Nav border on scroll ── */
+addEventListener('scroll', ()=>{
+  document.getElementById('nav').classList.toggle('scrolled', scrollY > 50);
+});
+
+/* ── Animated sakura cursor (tracks the pointer 1:1, sways & blooms) ── */
+if (matchMedia('(pointer:fine)').matches) {
+  const cf = document.getElementById('cursor-flower');
+  document.documentElement.classList.add('cursor-anim');
+  let shown = false;
+  addEventListener('mousemove', e => {
+    cf.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    if (!shown) { shown = true; cf.classList.add('on'); }
+  }, { passive: true });
+  addEventListener('mousedown', () => { cf.classList.add('pop'); setTimeout(() => cf.classList.remove('pop'), 480); });
+}
+
+/* ── Petals: gentle idle float + soft drift away from the cursor ── */
+(() => {
+  const els = [...document.querySelectorAll('.petal')];
+  if (!els.length) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const S = els.map(el => ({ el, x: 0, y: 0, bx: 0, by: 0,
+    ph: Math.random() * 6.283, sp: 0.35 + Math.random() * 0.4, amp: 3 + Math.random() * 4 }));
+  let mx = -9999, my = -9999;
+  function cache(){
+    for (const s of S){ const r = s.el.getBoundingClientRect();
+      s.bx = r.left + r.width / 2 - s.x + scrollX; s.by = r.top + r.height / 2 - s.y + scrollY; }
+  }
+  function tick(t){
+    requestAnimationFrame(tick);
+    const time = t * 0.001;
+    for (const s of S){
+      const cx = s.bx - scrollX, cy = s.by - scrollY;
+      let gx = 0, gy = 0;
+      if (!reduce){ gx = Math.sin(time * s.sp + s.ph) * s.amp; gy = Math.cos(time * s.sp * 0.8 + s.ph) * s.amp * 0.7; }
+      const dx = cx - mx, dy = cy - my, d = Math.hypot(dx, dy), R = 110;
+      if (d < R){ const f = (R - d) / R * 16; gx += dx / (d || 1) * f; gy += dy / (d || 1) * f; }
+      s.x += (gx - s.x) * 0.06; s.y += (gy - s.y) * 0.06;
+      s.el.style.transform = `translate(${s.x.toFixed(2)}px, ${s.y.toFixed(2)}px) rotate(var(--r,0deg))`;
+    }
+  }
+  addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
+  addEventListener('resize', cache);
+  addEventListener('load', cache);
+  cache();
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
