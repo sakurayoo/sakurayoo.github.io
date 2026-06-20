@@ -107,14 +107,17 @@ body::before {
   0% { opacity: 0.75; transform: translate(-50%,-50%) rotate(0) scale(1); }
   100% { opacity: 0; transform: translate(-50%, calc(-50% - 50px)) rotate(60deg) scale(0.3); }
 }
-/* ── Loading screen (hides until web fonts are ready, so type never jumps) ── */
-#loader { position: fixed; inset: 0; z-index: 99999; background: var(--washi);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+/* ── Loading screen (light pink; hides once fonts + images are ready) ── */
+#loader { position: fixed; inset: 0; z-index: 99999; background: #fce3ec;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
   transition: opacity .7s ease, visibility .7s; }
 #loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
-#loader img { width: 62px; height: auto; animation: loader-spin 1.7s cubic-bezier(.45,.05,.55,.95) infinite; }
-@keyframes loader-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.18); } 100% { transform: rotate(360deg) scale(1); } }
-#loader .lt { font-family: var(--serif); font-weight: 500; font-size: 1.1rem; letter-spacing: .35em; color: var(--plum); padding-left: .35em; }
+#loader img { width: 66px; height: auto; animation: loader-spin 1.8s cubic-bezier(.45,.05,.55,.95) infinite; }
+@keyframes loader-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.16); } 100% { transform: rotate(360deg) scale(1); } }
+.loader-text { display: flex; gap: 1px; font-family: var(--sans); font-weight: 500; font-size: 0.95rem; letter-spacing: 3px; color: var(--plum); padding-left: 3px; }
+.loader-text span { display: inline-block; animation: loader-bounce 1.1s ease-in-out infinite; }
+@keyframes loader-bounce { 0%, 65%, 100% { transform: translateY(0); } 30% { transform: translateY(-9px); } }
+@media (prefers-reduced-motion: reduce) { #loader img, .loader-text span { animation: none; } }
 
 /* ── Nav ── */
 nav {
@@ -396,7 +399,7 @@ footer { padding: 40px 0; text-align: center; border-top: 1px solid var(--line-s
 </head>
 <body>
 
-<div id="loader"><img src="assets/petals/petal-17.png" alt=""></div>
+<div id="loader"><img src="assets/loader-flower.png" alt=""><div class="loader-text" aria-label="Loading"><span style="animation-delay:0s">L</span><span style="animation-delay:.07s">O</span><span style="animation-delay:.14s">A</span><span style="animation-delay:.21s">D</span><span style="animation-delay:.28s">I</span><span style="animation-delay:.35s">N</span><span style="animation-delay:.42s">G</span><span style="animation-delay:.49s">.</span><span style="animation-delay:.56s">.</span><span style="animation-delay:.63s">.</span></div></div>
 <script>(function(){var l=document.getElementById('loader');if(!l)return;var d=function(){l.classList.add('done')};var fonts=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();var load=new Promise(function(r){if(document.readyState==='complete')r();else addEventListener('load',r,{once:true})});var minT=new Promise(function(r){setTimeout(r,650)});Promise.all([fonts,load,minT]).then(d);setTimeout(d,9000);})();</script>
 
 <!-- decorative cherry branches are the Hiroshige PNGs in the corners (below) -->
