@@ -112,7 +112,7 @@ body::before {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
   transition: opacity .7s ease, visibility .7s; }
 #loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
-#loader img { width: 54px; height: 54px; animation: loader-spin 1.7s cubic-bezier(.45,.05,.55,.95) infinite; }
+#loader img { width: 62px; height: auto; animation: loader-spin 1.7s cubic-bezier(.45,.05,.55,.95) infinite; }
 @keyframes loader-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.18); } 100% { transform: rotate(360deg) scale(1); } }
 #loader .lt { font-family: var(--serif); font-weight: 500; font-size: 1.1rem; letter-spacing: .35em; color: var(--plum); padding-left: .35em; }
 
@@ -396,7 +396,7 @@ footer { padding: 40px 0; text-align: center; border-top: 1px solid var(--line-s
 </head>
 <body>
 
-<div id="loader"><img src="assets/sakura-cursor.png" alt=""></div>
+<div id="loader"><img src="assets/petals/petal-17.png" alt=""></div>
 <script>(function(){var l=document.getElementById('loader');if(!l)return;var d=function(){l.classList.add('done')};var fonts=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();var load=new Promise(function(r){if(document.readyState==='complete')r();else addEventListener('load',r,{once:true})});var minT=new Promise(function(r){setTimeout(r,650)});Promise.all([fonts,load,minT]).then(d);setTimeout(d,9000);})();</script>
 
 <!-- decorative cherry branches are the Hiroshige PNGs in the corners (below) -->
