@@ -326,6 +326,12 @@ section + section::before {
 .skill-badges { display: flex; flex-wrap: wrap; gap: 7px; }
 .skill-badges span { font-size: 0.8rem; padding: 5px 13px; background: var(--washi); color: var(--body); border: 1px solid var(--line); border-radius: 2px; transition: all 0.25s; cursor: default; }
 .skill-badges span:hover { background: var(--plum); color: #fff; border-color: var(--plum); transform: translateY(-2px); }
+.skill-list { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+.skill-list li { font-size: 0.88rem; padding-left: 15px; position: relative; }
+.skill-list li::before { content: '✿'; position: absolute; left: 0; top: 2px; font-size: 0.6rem; color: var(--sakura-mid); }
+.skill-list b { color: var(--ink); font-weight: 500; }
+.skill-list small { display: block; color: var(--muted); font-size: 0.74rem; margin-top: 2px; line-height: 1.55; }
+.skill-q { font-size: 0.72rem; color: var(--plum); font-weight: 400; }
 
 /* ── Projects ── */
 .proj-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
@@ -528,24 +534,34 @@ footer { padding: 40px 0; text-align: center; border-top: 1px solid var(--line-s
       <div class="sec-head reveal"><h2 class="sec-title">技術能力</h2><span class="sec-rom">skills</span></div>
       <div class="skills-grid">
         <div class="skill-col reveal d1">
-          <div class="skill-head">網頁設計</div><div class="skill-sub">Web Design</div>
-          <div class="skill-badges"><span>HTML5</span><span>CSS3</span><span>UI 設計</span><span>網頁配色</span><span>版面切版</span><span>RWD 響應式</span></div>
+          <div class="skill-head">後端 <span class="skill-q">主力</span></div><div class="skill-sub">Backend</div>
+          <ul class="skill-list">
+            <li><b>ASP.NET Core Web API</b><small>RESTful API 設計、JWT 驗證、檔案上傳</small></li>
+            <li><b>C# / .NET 6+</b></li>
+            <li><b>Entity Framework Core</b><small>查詢優化、交易處理</small></li>
+            <li><b>Clean Architecture</b><small>分層式架構</small></li>
+            <li><b>Dependency Injection（DI）</b></li>
+            <li><b>MSSQL</b><small>Index 調校、Stored Procedure、T-SQL 優化</small></li>
+          </ul>
         </div>
         <div class="skill-col reveal d2">
-          <div class="skill-head">前端</div><div class="skill-sub">Front End</div>
-          <div class="skill-badges"><span>JavaScript</span><span>Vue.js</span><span>React</span><span>Bootstrap</span><span>jQuery</span><span>串接 API</span></div>
+          <div class="skill-head">前端 <span class="skill-q">專案導向</span></div><div class="skill-sub">Frontend</div>
+          <ul class="skill-list">
+            <li><b>Vue 3</b><small>Composition API</small></li>
+            <li><b>React 18</b></li>
+            <li><b>JavaScript ES6+</b></li>
+            <li><b>Tailwind CSS</b></li>
+          </ul>
         </div>
         <div class="skill-col reveal d3">
-          <div class="skill-head">後端</div><div class="skill-sub">Back End</div>
-          <div class="skill-badges"><span>C#</span><span>ASP.NET</span><span>MVC</span><span>Blazor</span><span>Java</span><span>Spring Boot</span><span>PHP</span><span>RESTful API</span></div>
-        </div>
-        <div class="skill-col reveal d4">
-          <div class="skill-head">資料庫</div><div class="skill-sub">Database</div>
-          <div class="skill-badges"><span>MSSQL</span><span>MySQL</span><span>T-SQL</span><span>資料庫建置</span></div>
-        </div>
-        <div class="skill-col reveal d4">
-          <div class="skill-head">AI 應用</div><div class="skill-sub">AI Tools</div>
-          <div class="skill-badges"><span>Claude Code</span><span>ChatGPT</span><span>串接 API</span></div>
+          <div class="skill-head">其他技術 <span class="skill-q">實作經驗</span></div><div class="skill-sub">Other</div>
+          <ul class="skill-list">
+            <li><b>Java Spring Boot</b><small>API 開發</small></li>
+            <li><b>PHP</b><small>Legacy 系統維護</small></li>
+            <li><b>Windows Forms</b><small>桌面系統維護</small></li>
+            <li><b>IIS 部署與維運</b></li>
+            <li><b>MySQL / MSSQL 資料庫設計</b></li>
+          </ul>
         </div>
       </div>
     </div>
