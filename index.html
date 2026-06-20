@@ -397,7 +397,7 @@ footer { padding: 40px 0; text-align: center; border-top: 1px solid var(--line-s
 <body>
 
 <div id="loader"><img src="assets/sakura-cursor.png" alt=""></div>
-<script>(function(){var l=document.getElementById('loader');if(!l)return;var d=function(){l.classList.add('done')};var f=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();Promise.all([f,new Promise(function(r){setTimeout(r,650)})]).then(d);setTimeout(d,4000);})();</script>
+<script>(function(){var l=document.getElementById('loader');if(!l)return;var d=function(){l.classList.add('done')};var fonts=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();var load=new Promise(function(r){if(document.readyState==='complete')r();else addEventListener('load',r,{once:true})});var minT=new Promise(function(r){setTimeout(r,650)});Promise.all([fonts,load,minT]).then(d);setTimeout(d,9000);})();</script>
 
 <!-- decorative cherry branches are the Hiroshige PNGs in the corners (below) -->
 
