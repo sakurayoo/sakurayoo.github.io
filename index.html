@@ -22,9 +22,9 @@
   --sakura:     #e89bb4;
   --sakura-mid: #d97f9e;
   --sakura-pale:#f6d6e0;
-  --serif:      'Noto Serif TC', 'PMingLiU', 'Songti TC', serif;
-  --sans:       'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', system-ui, sans-serif;
-  --cormorant:  'Cormorant Garamond', Georgia, serif;
+  --serif:      'Noto Serif TC', serif;
+  --sans:       'Noto Sans TC', system-ui, sans-serif;
+  --cormorant:  'Cormorant Garamond', serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -107,6 +107,14 @@ body::before {
   0% { opacity: 0.75; transform: translate(-50%,-50%) rotate(0) scale(1); }
   100% { opacity: 0; transform: translate(-50%, calc(-50% - 50px)) rotate(60deg) scale(0.3); }
 }
+/* ── Loading screen (hides until web fonts are ready, so type never jumps) ── */
+#loader { position: fixed; inset: 0; z-index: 99999; background: var(--washi);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+  transition: opacity .7s ease, visibility .7s; }
+#loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
+#loader img { width: 54px; height: 54px; animation: loader-spin 1.7s cubic-bezier(.45,.05,.55,.95) infinite; }
+@keyframes loader-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.18); } 100% { transform: rotate(360deg) scale(1); } }
+#loader .lt { font-family: var(--serif); font-weight: 500; font-size: 1.1rem; letter-spacing: .35em; color: var(--plum); padding-left: .35em; }
 
 /* ── Nav ── */
 nav {
@@ -388,6 +396,9 @@ footer { padding: 40px 0; text-align: center; border-top: 1px solid var(--line-s
 </head>
 <body>
 
+<div id="loader"><img src="assets/sakura-cursor.png" alt=""></div>
+<script>(function(){var l=document.getElementById('loader');if(!l)return;var d=function(){l.classList.add('done')};var f=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();Promise.all([f,new Promise(function(r){setTimeout(r,650)})]).then(d);setTimeout(d,4000);})();</script>
+
 <!-- decorative cherry branches are the Hiroshige PNGs in the corners (below) -->
 
 <!-- per-section cherry imagery: hero bg + side branch + petals carpet (Wikimedia Commons, see credits) -->
@@ -640,7 +651,7 @@ let pi = 0, ci = 0, del = false;
   setTimeout(type, d);
 })();
 
-/* ── Petals: blow right→left over the hero, gentle fall elsewhere ── */
+/* ── Petals: diagonal drift — fast wind over hero, slower (still slanted) below ── */
 const cv = document.getElementById('petal-canvas'), x = cv.getContext('2d');
 let W, H, list = [], mx = -9999, my = -9999, wT = 0, f = 0;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -653,10 +664,10 @@ class P {
     this.s = Math.random()*6+5;
     this.x = Math.random()*W;
     this.y = init ? Math.random()*H : -16;
-    this.vy = Math.random()*1+0.9;
-    this.vx = (Math.random()-0.5)*0.3;
     this.bvx = -(Math.random()*2.6+1.8);
     this.bvy = Math.random()*2+1.8;
+    this.svx = -(Math.random()*0.8+0.7);
+    this.svy = Math.random()*0.8+0.9;
     this.rot = Math.random()*6.28;
     this.rs = (Math.random()-0.5)*0.03;
     this.op = Math.random()*0.32+0.32;
@@ -664,23 +675,17 @@ class P {
     this.sw = Math.random()*0.6+0.25;
     this.c = PAL[(Math.random()*3)|0];
   }
-  fromRight(){ if (Math.random()<0.5){ this.x = W+20+Math.random()*90; this.y = Math.random()*H*0.8; } else { this.x = Math.random()*W; this.y = -20-Math.random()*60; } this.bvx = -(Math.random()*2.6+1.8); this.bvy = Math.random()*2+1.8; }
-  fromTop(){ this.x = Math.random()*W; this.y = -16; this.vy = Math.random()*1+0.9; this.vx = (Math.random()-0.5)*0.3; }
-  step(wind, hero){
-    if (hero){
-      this.x += this.bvx - wind*0.25;
-      this.y += this.bvy + Math.sin(f*0.012+this.ph)*0.45;
-      this.rot += this.rs;
-      if (this.x < -45 || this.y > H+30 || this.y < -60){ this.fromRight(); }
-    } else {
-      const dx = this.x-mx, dy = this.y-my, dd = Math.hypot(dx,dy);
-      if (dd < 95){ const fr = (95-dd)/95*1.8; this.vx += dx/dd*fr*0.05; this.vy += dy/dd*fr*0.03; }
-      this.x += this.vx + Math.sin(f*0.012+this.ph)*this.sw + wind*0.3;
-      this.y += this.vy;
-      this.vx *= 0.98; this.vy = Math.min(3.8, this.vy*0.99+0.022);
-      this.rot += this.rs + wind*0.0015;
-      if (this.y > H+16 || this.x < -50 || this.x > W+50){ this.fromTop(); }
-    }
+  fromRight(){ if (Math.random()<0.5){ this.x = W+20+Math.random()*90; this.y = Math.random()*H*0.8; } else { this.x = Math.random()*W; this.y = -20-Math.random()*60; } }
+  step(wind, hf){
+    const sway = Math.sin(f*0.012+this.ph);
+    const bx = this.bvx - wind*0.25, by = this.bvy + sway*0.45;
+    const sx = this.svx + sway*this.sw*0.5 + wind*0.2, sy = this.svy;
+    let dx = hf*bx + (1-hf)*sx, dy = hf*by + (1-hf)*sy;
+    const rdx = this.x-mx, rdy = this.y-my, dd = Math.hypot(rdx,rdy);
+    if (dd < 95){ const fr = (95-dd)/95 * (1-hf) * 0.9; dx += rdx/dd*fr; dy += rdy/dd*fr*0.7; }
+    this.x += dx; this.y += dy;
+    this.rot += this.rs;
+    if (this.x < -52 || this.y > H+24 || this.y < -70){ this.fromRight(); }
   }
   draw(){
     x.save(); x.translate(this.x,this.y); x.rotate(this.rot); x.globalAlpha = this.op;
@@ -700,8 +705,8 @@ for (let i=0;i<44;i++) list.push(new P(true, true));
   x.clearRect(0,0,W,H);
   wT += 0.007; f++;
   const wind = Math.sin(wT)*0.6 + Math.sin(wT*2.3+1)*0.3;
-  const hero = scrollY < H * 0.9;
-  for (const p of list){ p.step(wind, hero); p.draw(); }
+  const hf = Math.max(0, Math.min(1, (H * 1.0 - scrollY) / (H * 0.7)));
+  for (const p of list){ p.step(wind, hf); p.draw(); }
 })();
 addEventListener('mousemove', e=>{ mx=e.clientX; my=e.clientY; });
 addEventListener('mouseleave', ()=>{ mx=my=-9999; });
